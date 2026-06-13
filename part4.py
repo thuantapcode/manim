@@ -1157,24 +1157,23 @@ class P4_WebOrganizer(VoiceoverScene):
                      "ngân sách học thuật khiêm tốn của phòng lab trường đại học."
         ) as tr:
             self.play(GrowFromCenter(hdr_bg), Write(hdr_txt), run_time=1.2)
-            self.wait(max(0, tr.duration - 1.3))
 
-        # ── 3.2 Topic × Format 2D grid ─────────────────────────
-        concept_t = T("WebOrganizer: Biến web hỗn loạn thành dữ liệu có cấu trúc", 20, WHITE)
-        concept_t.next_to(header, DOWN, buff=0.4)
+            # ── 3.2 Topic × Format 2D grid ─────────────────────────
+            concept_t = T("WebOrganizer: Biến web hỗn loạn thành dữ liệu có cấu trúc", 20, WHITE)
+            concept_t.next_to(header, DOWN, buff=0.4)
 
-        pages = VGroup(*[
-            RoundedRectangle(width=0.9, height=0.4, corner_radius=0.05,
-                             fill_color=GRAY, fill_opacity=0.2,
-                             stroke_color=GRAY_B, stroke_width=1)
-            for _ in range(24)
-        ])
-        pages.arrange_in_grid(rows=4, cols=6, buff=0.1)
-        pages.move_to(DOWN * 0.4)
+            pages = VGroup(*[
+                RoundedRectangle(width=0.9, height=0.4, corner_radius=0.05,
+                                fill_color=GRAY, fill_opacity=0.2,
+                                stroke_color=GRAY_B, stroke_width=1)
+                for _ in range(24)
+            ])
+            pages.arrange_in_grid(rows=4, cols=6, buff=0.1)
+            pages.move_to(DOWN * 0.4)
 
-        web_box = SurroundingRectangle(pages, color=HIGHLIGHT, corner_radius=0.15)
-        web_label = T("Web hỗn hợp", 18, HIGHLIGHT, weight="BOLD")
-        web_label.next_to(web_box, UP)
+            web_box = SurroundingRectangle(pages, color=HIGHLIGHT, corner_radius=0.15)
+            web_label = T("Web hỗn hợp", 18, HIGHLIGHT, weight="BOLD")
+            web_label.next_to(web_box, UP)
 
         with self.voiceover(
                 text="Kết quả thu được vô cùng ấn tượng. WebOrganizer đã phân tách thành công lượng dữ liệu web hỗn mạt thành các miền tri thức có cấu trúc hai chiều cực kỳ dễ hiểu, thông qua hai hệ thống phân loại bổ sung cho nhau là chủ đề và định dạng."
@@ -1182,71 +1181,62 @@ class P4_WebOrganizer(VoiceoverScene):
             self.play(FadeIn(concept_t))
             dirs = [UP, DOWN, LEFT, RIGHT, UP + LEFT, UP + RIGHT]
             self.play(LaggedStart(*[FadeIn(p, shift=dirs[i % len(dirs)] * 0.25) for i, p in enumerate(pages)],
-                                  lag_ratio=0.08))
+                                lag_ratio=0.08))
             self.play(Create(web_box), FadeIn(web_label))
             self.wait(0.5)
-            self.wait(max(0, tr.duration - 2.3))
 
-        # ---------------------------------------------------------
-        # CHUYỂN SANG TOPIC + FORMAT (có màu sắc, tránh đè viền)
-        # ---------------------------------------------------------
-        self.play(FadeOut(concept_t), FadeOut(web_box), FadeOut(web_label))
+            # ---------------------------------------------------------
+            # CHUYỂN SANG TOPIC + FORMAT (có màu sắc, tránh đè viền)
+            # ---------------------------------------------------------
+            self.play(FadeOut(concept_t), FadeOut(web_box), FadeOut(web_label))
 
-        # Panel lớn hơn một chút và có fill màu nhẹ
-        topic_panel = RoundedRectangle(width=3.6, height=2.3, corner_radius=0.15,
-                                       stroke_color=ACADEMIA, fill_color=ACADEMIA, fill_opacity=0.05)
-        topic_panel.move_to(LEFT * 3.2)
-        topic_title = T("Topic", 22, ACADEMIA, weight="BOLD")
-        topic_title.next_to(topic_panel, UP, buff=0.15)
+            # Panel lớn hơn một chút và có fill màu nhẹ
+            topic_panel = RoundedRectangle(width=3.6, height=2.3, corner_radius=0.15,
+                                        stroke_color=ACADEMIA, fill_color=ACADEMIA, fill_opacity=0.05)
+            topic_panel.move_to(LEFT * 3.2)
+            topic_title = T("Topic", 22, ACADEMIA, weight="BOLD")
+            topic_title.next_to(topic_panel, UP, buff=0.15)
 
-        format_panel = RoundedRectangle(width=3.6, height=2.3, corner_radius=0.15,
-                                        stroke_color=SUCCESS, fill_color=SUCCESS, fill_opacity=0.05)
-        format_panel.move_to(RIGHT * 3.2)
-        format_title = T("Format", 22, SUCCESS, weight="BOLD")
-        format_title.next_to(format_panel, UP, buff=0.15)
+            format_panel = RoundedRectangle(width=3.6, height=2.3, corner_radius=0.15,
+                                            stroke_color=SUCCESS, fill_color=SUCCESS, fill_opacity=0.05)
+            format_panel.move_to(RIGHT * 3.2)
+            format_title = T("Format", 22, SUCCESS, weight="BOLD")
+            format_title.next_to(format_panel, UP, buff=0.15)
 
-        self.play(Create(topic_panel), Create(format_panel), FadeIn(topic_title), FadeIn(format_title))
+            self.play(Create(topic_panel), Create(format_panel), FadeIn(topic_title), FadeIn(format_title))
 
-        # Chia 24 ô thành 2 nhóm, mỗi nhóm 12 ô
-        left_pages = pages[:12]
-        right_pages = pages[12:]
+            # Chia 24 ô thành 2 nhóm, mỗi nhóm 12 ô
+            left_pages = pages[:12]
+            right_pages = pages[12:]
 
-        # Tạo lưới con 3x4, điều chỉnh kích thước ô nhỏ hơn để vừa panel
-        grid_topic = VGroup(*left_pages).copy()
-        for rect in grid_topic:
-            rect.set(width=0.85, height=0.38)
-        grid_topic.arrange_in_grid(rows=4, cols=3, buff=0.08)
-        grid_topic.move_to(topic_panel.get_center())
+            # Tạo lưới con 3x4, điều chỉnh kích thước ô nhỏ hơn để vừa panel
+            grid_topic = VGroup(*left_pages).copy()
+            for rect in grid_topic:
+                rect.set(width=0.85, height=0.38)
+            grid_topic.arrange_in_grid(rows=4, cols=3, buff=0.08)
+            grid_topic.move_to(topic_panel.get_center())
 
-        grid_format = VGroup(*right_pages).copy()
-        for rect in grid_format:
-            rect.set(width=0.85, height=0.38)
-        grid_format.arrange_in_grid(rows=4, cols=3, buff=0.08)
-        grid_format.move_to(format_panel.get_center())
+            grid_format = VGroup(*right_pages).copy()
+            for rect in grid_format:
+                rect.set(width=0.85, height=0.38)
+            grid_format.arrange_in_grid(rows=4, cols=3, buff=0.08)
+            grid_format.move_to(format_panel.get_center())
 
-        # Thay đổi màu sắc các ô (topic: xanh dương nhạt, format: xanh ngọc nhạt)
-        for rect in grid_topic:
-            rect.set_fill(ACADEMIA, opacity=0.3)
-            rect.set_stroke(ACADEMIA, width=1.5)
-        for rect in grid_format:
-            rect.set_fill(SUCCESS, opacity=0.3)
-            rect.set_stroke(SUCCESS, width=1.5)
+            # Thay đổi màu sắc các ô (topic: xanh dương nhạt, format: xanh ngọc nhạt)
+            for rect in grid_topic:
+                rect.set_fill(ACADEMIA, opacity=0.3)
+                rect.set_stroke(ACADEMIA, width=1.5)
+            for rect in grid_format:
+                rect.set_fill(SUCCESS, opacity=0.3)
+                rect.set_stroke(SUCCESS, width=1.5)
 
-        self.play(
-            *[ReplacementTransform(left_pages[i], grid_topic[i]) for i in range(12)],
-            *[ReplacementTransform(right_pages[i], grid_format[i]) for i in range(12)],
-            run_time=1.5
-        )
+            self.play(
+                *[ReplacementTransform(left_pages[i], grid_topic[i]) for i in range(12)],
+                *[ReplacementTransform(right_pages[i], grid_format[i]) for i in range(12)],
+                run_time=1.5
+            )
 
-        desc = T("Mỗi trang web được gán đồng thời một chủ đề và định dạng", 16, WHITE)
-        desc.next_to(VGroup(topic_panel, format_panel), DOWN, buff=0.5)
-
-        with self.voiceover(
-                text="Mỗi trang web giờ đây không còn là một phần tử vô danh, mà được gắn đồng thời vào một chủ đề và định dạng cụ thể."
-        ) as tr:
-            self.play(FadeIn(desc))
-
-        self.play(FadeOut(VGroup(topic_panel, format_panel, topic_title, format_title, grid_topic, grid_format, desc)))
+        self.play(FadeOut(VGroup(topic_panel, format_panel, topic_title, format_title, grid_topic, grid_format)))
 
         # ── FORMAT SKEW ─────────────────────────────────────
         skew_title = T("Phân phối định dạng bị thiên lệch mạnh", 22, INDUSTRY, weight=BOLD)
