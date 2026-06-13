@@ -40,3 +40,12 @@ The final file is written to:
 ```text
 media/videos/main/1080p60/FullVideo.mp4
 ```
+
+If a long unified render only keeps the first section's audio, rebuild the
+Part 1-3 master audio track without rerendering the video:
+
+```powershell
+python fix_fullvideo_audio.py
+```
+
+Parts 4-5 require working Edge TTS access to contain narration.
