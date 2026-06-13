@@ -289,7 +289,7 @@ class P4_DataCuration(VoiceoverScene):
                 Create(cross)
             )
 
-            self.wait(max(0, tr.duration - 4))
+            self.wait(3)
 
         with self.voiceover(
                 text=(
@@ -327,7 +327,7 @@ class P4_DataCuration(VoiceoverScene):
                 )
             )
 
-            self.wait(max(0, tr.duration - 2.5))
+            self.wait(3)
 
         self.play(
             FadeOut(
@@ -1122,16 +1122,15 @@ class P4_CuratingProject(VoiceoverScene):
             self.play(FadeIn(struct_bg), Write(struct_head), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(row, shift=RIGHT * 0.1) for row in items_group], lag_ratio=0.22),
                       run_time=0.8)
-            self.wait(2)
+            self.wait(3.5)
             self.play(GrowFromCenter(vs_t), run_time=0.3)
             self.play(FadeIn(cc_bg), Write(cc_head), run_time=0.5)
             self.play(LaggedStart(*[GrowFromCenter(d) for d in chaos_dots], lag_ratio=0.06), run_time=0.95)
-            self.wait(0.5)
+            self.wait(3)
             self.play(FadeOut(VGroup(struct_bg, struct_head, items_group, cc_bg, cc_head, chaos_dots, vs_t)),
                       run_time=0.4)
             self.play(GrowFromCenter(big_q), run_time=0.55)
             flash_mob(self, big_q, color=HIGHLIGHT, radius=1.0)
-            self.wait(max(0, tr.duration - 5.85))
 
         self.wait(0.5)
         clear(self)
@@ -2690,7 +2689,7 @@ class P4_PostTraining(VoiceoverScene):
         win_sub.next_to(win_title, DOWN, buff=0.1)
         win_check = VGroup(
             T("✓", 13, SUCCESS),
-            T("y_w", 18, SUCCESS),
+            MathTex(r"y_w", font_size=20, color=SUCCESS),
             T("(winning)", 13, SUCCESS),
         ).arrange(RIGHT, buff=0.07)
         win_check.move_to([0, -win_bg.height/2 + 0.22, 0])
@@ -2704,7 +2703,7 @@ class P4_PostTraining(VoiceoverScene):
         lose_sub.next_to(lose_title, DOWN, buff=0.1)
         lose_x = VGroup(
             T("✗", 13, INDUSTRY),
-            T("y_l", 18, INDUSTRY),
+            MathTex(r"y_l", font_size=20, color=INDUSTRY),
             T("(losing)", 13, INDUSTRY),
         ).arrange(RIGHT, buff=0.07)
         lose_x.move_to([0, -lose_bg.height/2 + 0.22, 0])
@@ -2717,7 +2716,10 @@ class P4_PostTraining(VoiceoverScene):
                       buff=0.08, color=INDUSTRY, stroke_width=2.0,
                       max_tip_length_to_length_ratio=0.15)
 
-        prob_t = T("P(y_w | x)  UP     P(y_l | x)  DOWN", 22, WHITE)
+        prob_t = MathTex(
+            r"P(y_w \mid x)\,\uparrow \quad\quad P(y_l \mid x)\,\downarrow",
+            font_size=28, color=WHITE,
+        )
         prob_t.move_to(DOWN * 2.42)
 
         with self.voiceover(
@@ -2735,70 +2737,141 @@ class P4_PostTraining(VoiceoverScene):
         self.play(FadeOut(VGroup(pref_title, prompt_grp, win_card, lose_card,
                                   arr_w, arr_l, prob_t)))
 
-        # ── 6.5 DPO vs SimPO intro ────────────────────────────────────────────
-        vs_title = T("DPO (Stanford)  vs  SimPO (Princeton)", 22, WHITE, weight=BOLD)
-        vs_title.next_to(header, DOWN, buff=0.45)
+        # ── 6.5 DPO — công thức và điểm yếu ─────────────────────────────────
+        dpo_title = T("DPO — Direct Preference Optimization", 22, INDUSTRY, weight=BOLD)
+        dpo_title.next_to(header, DOWN, buff=0.42)
+        dpo_src   = T("Rafailov et al., NeurIPS 2023  ·  Stanford", 14, NEUTRAL)
+        dpo_src.next_to(dpo_title, DOWN, buff=0.28)
+
+        dpo_formula = MathTex(
+            r"\mathcal{L}_{\text{DPO}} = -\mathbb{E}\!\left[\log\sigma\!\left(",
+            r"\beta\log\frac{\pi_\theta(y_w\!\mid\! x)}{\pi_{\text{ref}}(y_w\!\mid\! x)}",
+            r"-\,\beta\log\frac{\pi_\theta(y_l\!\mid\! x)}{\pi_{\text{ref}}(y_l\!\mid\! x)}",
+            r"\right)\right]",
+            font_size=28,
+        )
+        dpo_formula[1].set_color(SUCCESS)
+        dpo_formula[2].set_color(INDUSTRY)
+        dpo_formula.next_to(dpo_src, DOWN, buff=0.5)
+
+        dpo_box = SurroundingRectangle(
+            dpo_formula, corner_radius=0.14,
+            color=INDUSTRY, fill_color=INDUSTRY, fill_opacity=0.08, buff=0.25
+        )
+
+        dpo_prob1 = VGroup(
+            T("✗", 15, INDUSTRY, weight=BOLD),
+            T("Cần ", 14, INDUSTRY),
+            MathTex(r"\pi_{\text{ref}}", font_size=20, color=INDUSTRY),
+            T("cố định — chiếm thêm GPU.", 14, INDUSTRY),
+        ).arrange(RIGHT, buff=0.08)
+        dpo_prob2 = VGroup(
+            T("✗", 15, INDUSTRY, weight=BOLD),
+            T("Không chuẩn hóa độ dài — ưu tiên câu trả lời dài hơn.", 14, INDUSTRY),
+        ).arrange(RIGHT, buff=0.08)
+        dpo_probs = VGroup(dpo_prob1, dpo_prob2).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        dpo_probs.next_to(dpo_box, DOWN, buff=0.22)
 
         with self.voiceover(
             text="Nếu như trước đây, khối công nghiệp thống trị bằng phương pháp DPO cồng kềnh từ "
                  "Stanford, thì năm vừa qua, phòng lab Princeton đã tạo nên một bước ngoặt với "
                  "thuật toán SimPO."
         ) as tr:
-            self.play(FadeIn(vs_title, shift=DOWN * 0.1), run_time=0.7)
-            self.wait(max(0, tr.duration - 0.9))
+            self.play(FadeIn(dpo_title), FadeIn(dpo_src), run_time=0.55)
+            self.play(Create(dpo_box), run_time=0.4)
+            self.play(
+                LaggedStart(*[FadeIn(p) for p in dpo_formula], lag_ratio=0.22),
+                run_time=0.85
+            )
+            self.wait(0.4)
+            self.play(
+                LaggedStart(
+                    FadeIn(dpo_prob1, shift=RIGHT * 0.1),
+                    FadeIn(dpo_prob2, shift=RIGHT * 0.1),
+                    lag_ratio=0.35,
+                ),
+                run_time=0.75
+            )
+            self.wait(max(0, tr.duration - 3.5))
 
-        self.play(FadeOut(vs_title))
+        self.play(FadeOut(VGroup(dpo_title, dpo_src, dpo_box, dpo_formula, dpo_probs)))
 
-        # ── 6.6 DPO formula ───────────────────────────────────────────────────
-        dpo_title = T("DPO — Direct Preference Optimization", 22, INDUSTRY, weight=BOLD)
-        dpo_title.next_to(header, DOWN, buff=0.45)
-        dpo_src   = T("Rafailov et al., NeurIPS 2023  ·  Stanford", 14, NEUTRAL)
-        dpo_src.next_to(dpo_title, DOWN, buff=0.32)
+        # ── 6.6 SimPO — công thức và lý do vượt trội ─────────────────────────
+        simpo_title = T("SimPO — Simple Preference Optimization", 22, SUCCESS, weight=BOLD)
+        simpo_title.next_to(header, DOWN, buff=0.42)
+        simpo_src = T("Meng et al., NeurIPS 2024  ·  Princeton NLP", 14, NEUTRAL)
+        simpo_src.next_to(simpo_title, DOWN, buff=0.28)
 
-        formula_rows = VGroup(
-            T("L_DPO = -E [ log sigmoid(", 18, WHITE),
-            T("beta log policy(y_w | x) / reference(y_w | x)", 16, SUCCESS),
-            T("- beta log policy(y_l | x) / reference(y_l | x)", 16, INDUSTRY),
-            T(") ]", 18, WHITE),
-        ).arrange(DOWN, buff=0.08)
-        formula_rows[1].set_color(SUCCESS)
-        formula_rows[2].set_color(INDUSTRY)
-        formula_rows.next_to(dpo_src, DOWN, buff=0.38)
+        # Công thức SimPO: không có π_ref, chia cho |y|, thêm margin γ
+        simpo_formula = MathTex(
+            r"\mathcal{L}_{\text{SimPO}} = -\mathbb{E}\!\left[\log\sigma\!\left(",
+            r"\frac{\log\pi_\theta(y_w\!\mid\! x)}{|y_w|}",
+            r"-\;\frac{\log\pi_\theta(y_l\!\mid\! x)}{|y_l|}",
+            r"-\;\gamma",
+            r"\right)\right]",
+            font_size=26,
+        )
+        simpo_formula[1].set_color(SUCCESS)   # winning term (length-normalized)
+        simpo_formula[2].set_color(INDUSTRY)  # losing term  (length-normalized)
+        simpo_formula[3].set_color(HIGHLIGHT) # margin γ
+        simpo_formula.next_to(simpo_src, DOWN, buff=0.5)
 
-        dpo_box = SurroundingRectangle(
-            formula_rows, corner_radius=0.14,
-            color=INDUSTRY, fill_color=INDUSTRY, fill_opacity=0.08, buff=0.28
+        simpo_box = SurroundingRectangle(
+            simpo_formula, corner_radius=0.14,
+            color=SUCCESS, fill_color=SUCCESS, fill_opacity=0.08, buff=0.25
         )
 
-        legend_items = VGroup(
-            VGroup(
-                T("policy", 17, SUCCESS),
-                T(" = policy (mô hình đang học)", 13, WHITE),
-            ).arrange(RIGHT, buff=0.10),
-            VGroup(
-                T("reference", 17, INDUSTRY),
-                T(" = reference model (cố định — tốn bộ nhớ!)", 13, WHITE),
-            ).arrange(RIGHT, buff=0.10),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-        legend_items.next_to(dpo_box, DOWN, buff=0.20)
+        simpo_adv1 = VGroup(
+            T("✓", 15, SUCCESS, weight=BOLD),
+            T("Xóa ", 14, SUCCESS),
+            MathTex(r"\pi_{\text{ref}}", font_size=20, color=SUCCESS),
+            T("— tiết kiệm ~50% bộ nhớ, huấn luyện nhanh gấp đôi.", 14, SUCCESS),
+        ).arrange(RIGHT, buff=0.08)
+        simpo_adv2 = VGroup(
+            T("✓", 15, SUCCESS, weight=BOLD),
+            T("Chuẩn hóa theo ", 14, SUCCESS),
+            MathTex(r"|y|", font_size=20, color=SUCCESS),
+            T("— đánh giá công bằng, tránh thiên lệch độ dài.", 14, SUCCESS),
+        ).arrange(RIGHT, buff=0.08)
+        simpo_adv3 = VGroup(
+            T("✓", 15, HIGHLIGHT, weight=BOLD),
+            T("Margin ", 14, HIGHLIGHT),
+            MathTex(r"\gamma", font_size=20, color=HIGHLIGHT),
+            T("— ép khoảng cách tối thiểu rõ ràng giữa câu đúng và câu sai.", 14, HIGHLIGHT),
+        ).arrange(RIGHT, buff=0.08)
+        simpo_advs = VGroup(simpo_adv1, simpo_adv2, simpo_adv3).arrange(
+            DOWN, aligned_edge=LEFT, buff=0.15
+        )
+        simpo_advs.next_to(simpo_box, DOWN, buff=0.20)
 
         with self.voiceover(
             text="Bằng cách loại bỏ hoàn toàn mô hình tham chiếu phức tạp và đưa vào cơ chế chuẩn "
                  "hóa độ dài, SimPO sử dụng một công thức toán học tối giản để ép mô hình chọn ra "
                  "câu trả lời chất lượng nhất một cách vô cùng nhẹ nhàng."
         ) as tr:
-            self.play(FadeIn(dpo_title), FadeIn(dpo_src), run_time=0.6)
-            self.play(Create(dpo_box), run_time=0.4)
-            self.play(FadeIn(formula_rows[0]), run_time=0.4)
-            self.play(FadeIn(formula_rows[1]), run_time=0.4)
-            self.play(FadeIn(formula_rows[2]), FadeIn(formula_rows[3]), run_time=0.4)
+            self.play(FadeIn(simpo_title), FadeIn(simpo_src), run_time=0.55)
+            self.play(Create(simpo_box), run_time=0.4)
+            self.play(FadeIn(simpo_formula[0]), run_time=0.3)
+            self.play(FadeIn(simpo_formula[1]), run_time=0.35)
             self.play(
-                LaggedStart(*[FadeIn(it) for it in legend_items], lag_ratio=0.3),
-                run_time=0.7
+                FadeIn(simpo_formula[2]),
+                FadeIn(simpo_formula[3]),
+                FadeIn(simpo_formula[4]),
+                run_time=0.4
             )
-            self.wait(max(0, tr.duration - 3.0))
+            self.wait(0.4)
+            self.play(
+                LaggedStart(
+                    FadeIn(simpo_adv1, shift=RIGHT * 0.1),
+                    FadeIn(simpo_adv2, shift=RIGHT * 0.1),
+                    FadeIn(simpo_adv3, shift=RIGHT * 0.1),
+                    lag_ratio=0.28,
+                ),
+                run_time=1.0
+            )
+            self.wait(max(0, tr.duration - 3.8))
 
-        self.play(FadeOut(VGroup(dpo_title, dpo_src, dpo_box, formula_rows, legend_items)))
+        self.play(FadeOut(VGroup(simpo_title, simpo_src, simpo_box, simpo_formula, simpo_advs)))
 
         # ── 6.7 SimPO impact statement ────────────────────────────────────────
         impact_t = T("SimPO tạo nên một cú sốc lớn!", 26, SUCCESS, weight=BOLD)
@@ -2853,95 +2926,95 @@ class P4_PostTraining(VoiceoverScene):
                  "lượt tải xuống."
         ) as tr:
             self.play(FadeIn(arena_title), run_time=0.5)
-            self.wait(max(0, tr.duration - 0.7))
+            self.wait(3)
 
-        # Leaderboard rows
-        ROW_H    = 0.38
-        ROW_GAP  = 0.09
-        SLOT     = ROW_H + ROW_GAP
-        DOTS_H   = 0.24
-        DOTS_GAP = 0.09
-        bx       = 0.3
+            # Leaderboard rows
+            ROW_H    = 0.38
+            ROW_GAP  = 0.09
+            SLOT     = ROW_H + ROW_GAP
+            DOTS_H   = 0.24
+            DOTS_GAP = 0.09
+            bx       = 0.3
 
-        y30    =  0.92
-        y33    =  y30 - SLOT
-        y35    =  y33 - SLOT
-        y_dots =  y35 - (ROW_H / 2 + DOTS_GAP + DOTS_H / 2)
-        y46    =  y_dots - (DOTS_H / 2 + DOTS_GAP + ROW_H / 2)
-        y49    =  y46 - SLOT
-        y31    =  y30 - SLOT
+            y30    =  0.92
+            y33    =  y30 - SLOT
+            y35    =  y33 - SLOT
+            y_dots =  y35 - (ROW_H / 2 + DOTS_GAP + DOTS_H / 2)
+            y46    =  y_dots - (DOTS_H / 2 + DOTS_GAP + ROW_H / 2)
+            y49    =  y46 - SLOT
+            y31    =  y30 - SLOT
 
-        def make_row(rank_str, name_str, col, hl=False):
-            bg = RoundedRectangle(corner_radius=0.07, width=6.4, height=ROW_H,
-                                  fill_color=col,
-                                  fill_opacity=0.45 if hl else 0.12,
-                                  stroke_color=col,
-                                  stroke_width=2.2 if hl else 0.5)
-            rk = T(f"#{rank_str}", 14, col if hl else GRAY_C,
-                   weight=BOLD if hl else NORMAL)
-            nm = T(name_str, 13, WHITE if hl else GRAY_B)
-            rk.move_to([-2.6, 0, 0])
-            nm.move_to([ 0.5, 0, 0])
-            return VGroup(bg, rk, nm)
+            def make_row(rank_str, name_str, col, hl=False):
+                bg = RoundedRectangle(corner_radius=0.07, width=6.4, height=ROW_H,
+                                    fill_color=col,
+                                    fill_opacity=0.45 if hl else 0.12,
+                                    stroke_color=col,
+                                    stroke_width=2.2 if hl else 0.5)
+                rk = T(f"#{rank_str}", 14, col if hl else GRAY_C,
+                    weight=BOLD if hl else NORMAL)
+                nm = T(name_str, 16, WHITE if hl else GRAY_B)
+                rk.move_to([-2.6, 0, 0])
+                nm.move_to([ 0.5, 0, 0])
+                return VGroup(bg, rk, nm)
 
-        row30 = make_row("30", "Gemma-2-27b-it",    GRAY_C).move_to([bx, y30,    0])
-        row33 = make_row("33", "Deepseek-Coder-v2", GRAY_C).move_to([bx, y33,    0])
-        row35 = make_row("35", "Yi-Large",           GRAY_C).move_to([bx, y35,    0])
+            row30 = make_row("30", "Gemma-2-27b-it",    GRAY_C).move_to([bx, y30,    0])
+            row33 = make_row("33", "Deepseek-Coder-v2", GRAY_C).move_to([bx, y33,    0])
+            row35 = make_row("35", "Yi-Large",           GRAY_C).move_to([bx, y35,    0])
 
-        dots_bg = RoundedRectangle(corner_radius=0.05, width=6.4, height=0.28,
-                                   fill_color=GRAY_E, fill_opacity=0.08,
-                                   stroke_color=GRAY_C, stroke_width=0.5, stroke_opacity=0.5)
-        dots_tx = T("⋮   ( #36 – #45 )   ⋮", 11, GRAY_C)
-        dots    = VGroup(dots_bg, dots_tx).move_to([bx, y_dots, 0])
+            dots_bg = RoundedRectangle(corner_radius=0.05, width=6.4, height=0.28,
+                                    fill_color=GRAY_E, fill_opacity=0.08,
+                                    stroke_color=GRAY_C, stroke_width=0.5, stroke_opacity=0.5)
+            dots_tx = T("⋮   ( #36 – #45 )   ⋮", 11, GRAY_C)
+            dots    = VGroup(dots_bg, dots_tx).move_to([bx, y_dots, 0])
 
-        row46 = make_row("46", "Qwen2-72B-Instruct", GRAY_C).move_to([bx, y46, 0])
-        row49 = make_row("49", "Gemma-2-9b-it",      ORANGE, hl=True).move_to([bx, y49, 0])
+            row46 = make_row("46", "Qwen2-72B-Instruct", GRAY_C).move_to([bx, y46, 0])
+            row49 = make_row("49", "Gemma-2-9b-it",      ORANGE, hl=True).move_to([bx, y49, 0])
 
-        static_rows = VGroup(row30, row33, row35, dots, row46)
+            static_rows = VGroup(row30, row33, row35, dots, row46)
 
-        self.play(
-            LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in static_rows],
-                        lag_ratio=0.12),
-            run_time=1.0
-        )
-        self.play(FadeIn(row49, shift=DOWN * 0.1), run_time=0.4)
-        flash_mob(self, row49, color=ORANGE, radius=0.7)
-        self.wait(0.5)
+            self.play(
+                LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in static_rows],
+                            lag_ratio=0.12),
+                run_time=1.0
+            )
+            self.play(FadeIn(row49, shift=DOWN * 0.1), run_time=0.4)
+            flash_mob(self, row49, color=ORANGE, radius=0.7)
+            self.wait(0.5)
 
-        # Jump animation: rank 49 → 31
-        row31_final = make_row("31", "Gemma-2-9b-it-SimPO", SUCCESS, hl=True)
-        row31_final.move_to([bx, y31, 0])
-        PUSH = SLOT
+            # Jump animation: rank 49 → 31
+            row31_final = make_row("31", "Gemma-2-9b-it-SimPO", SUCCESS, hl=True)
+            row31_final.move_to([bx, y31, 0])
+            PUSH = SLOT
 
-        row49.set_z_index(10)
-        self.play(
-            row49.animate.move_to([bx, y31, 0]),
-            row33.animate.shift(DOWN * PUSH),
-            row35.animate.shift(DOWN * PUSH),
-            dots .animate.shift(DOWN * PUSH),
-            FadeOut(row46),
-            run_time=1.35, rate_func=rush_from
-        )
-        row49.set_z_index(0)
-        self.play(Transform(row49, row31_final), run_time=0.40)
+            row49.set_z_index(10)
+            self.play(
+                row49.animate.move_to([bx, y31, 0]),
+                row33.animate.shift(DOWN * PUSH),
+                row35.animate.shift(DOWN * PUSH),
+                dots .animate.shift(DOWN * PUSH),
+                FadeOut(row46),
+                run_time=1.35, rate_func=rush_from
+            )
+            row49.set_z_index(0)
+            self.play(Transform(row49, row31_final), run_time=0.40)
 
-        badge_txt = T("+18", 28, SUCCESS, weight=BOLD)
-        badge_bg  = Circle(radius=0.42, fill_color=SUCCESS, fill_opacity=0.18,
-                            stroke_color=SUCCESS, stroke_width=2.2)
-        badge = VGroup(badge_bg, badge_txt)
-        badge.next_to(row49, LEFT, buff=0.20)
-        self.play(GrowFromCenter(badge), run_time=0.55)
-        flash_mob(self, badge, color=SUCCESS, radius=0.65)
+            badge_txt = T("+18", 28, SUCCESS, weight=BOLD)
+            badge_bg  = Circle(radius=0.42, fill_color=SUCCESS, fill_opacity=0.18,
+                                stroke_color=SUCCESS, stroke_width=2.2)
+            badge = VGroup(badge_bg, badge_txt)
+            badge.next_to(row49, LEFT, buff=0.20)
+            self.play(GrowFromCenter(badge), run_time=0.55)
+            flash_mob(self, badge, color=SUCCESS, radius=0.65)
 
-        # Trophy stats
-        trophy_t = T("Mô hình mạnh nhất < 10B · 1,2 triệu lượt tải", 15, HIGHLIGHT, weight=BOLD)
-        trophy_t.next_to(dots, DOWN, buff=0.32)
-        self.play(FadeIn(trophy_t, shift=UP * 0.1), run_time=0.6)
-        flash_mob(self, trophy_t, color=HIGHLIGHT, radius=1.4)
-        self.wait(0.8)
+            # Trophy stats
+            trophy_t = T("Mô hình mạnh nhất < 10B · 1,2 triệu lượt tải", 15, HIGHLIGHT, weight=BOLD)
+            trophy_t.next_to(dots, DOWN, buff=0.32)
+            self.play(FadeIn(trophy_t, shift=UP * 0.1), run_time=0.6)
+            flash_mob(self, trophy_t, color=HIGHLIGHT, radius=1.4)
+            self.wait(0.8)
 
-        self.play(FadeOut(VGroup(arena_title, row30, row33, row35, dots, row49,
-                                  badge, trophy_t)))
+            self.play(FadeOut(VGroup(arena_title, row30, row33, row35, dots, row49,
+                                    badge, trophy_t)))
 
         # ── 6.10 Deep thinking — not just numbers ─────────────────────────────
         deep_t = T("Đỉnh cao tư duy học thuật không dừng lại ở những con số!", 19, ACADEMIA, weight=BOLD)
@@ -3029,7 +3102,6 @@ class P4_PostTraining(VoiceoverScene):
 
         self.wait(1.2)
         clear(self)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # P4_Complete — All 6 scenes stitched together with chapter-break transitions
