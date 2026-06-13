@@ -1,7 +1,9 @@
 """Custom Edge TTS service for manim-voiceover with retry + throttle."""
 import asyncio
+import os
 import time
 import random
+import wave
 from pathlib import Path
 from manim import logger
 from manim_voiceover.services.base import SpeechService
@@ -46,6 +48,23 @@ class EdgeTTSService(SpeechService):
 
         audio_path = (path if path else self.get_audio_basename(input_data) + ".mp3")
         full_path = str(Path(cache_dir) / audio_path)
+
+        if os.environ.get("EDGE_TTS_OFFLINE_FALLBACK") == "1":
+            audio_path = self.get_audio_basename(input_data) + ".wav"
+            full_path = str(Path(cache_dir) / audio_path)
+            if not Path(full_path).exists():
+                duration = max(2.0, len(text.split()) / 2.7)
+                sample_rate = 16000
+                with wave.open(full_path, "wb") as wav:
+                    wav.setnchannels(1)
+                    wav.setsampwidth(2)
+                    wav.setframerate(sample_rate)
+                    wav.writeframes(b"\x00\x00" * int(sample_rate * duration))
+            return {
+                "input_text": text,
+                "input_data": input_data,
+                "original_audio": audio_path,
+            }
 
         # Pre-request throttle — only for un-cached texts
         sleep_t = random.uniform(self.throttle_min, self.throttle_max)

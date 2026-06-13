@@ -2690,7 +2690,7 @@ class P4_PostTraining(VoiceoverScene):
         win_sub.next_to(win_title, DOWN, buff=0.1)
         win_check = VGroup(
             T("✓", 13, SUCCESS),
-            MathTex(r"y_w", font_size=20, color=SUCCESS),
+            T("y_w", 18, SUCCESS),
             T("(winning)", 13, SUCCESS),
         ).arrange(RIGHT, buff=0.07)
         win_check.move_to([0, -win_bg.height/2 + 0.22, 0])
@@ -2704,7 +2704,7 @@ class P4_PostTraining(VoiceoverScene):
         lose_sub.next_to(lose_title, DOWN, buff=0.1)
         lose_x = VGroup(
             T("✗", 13, INDUSTRY),
-            MathTex(r"y_l", font_size=20, color=INDUSTRY),
+            T("y_l", 18, INDUSTRY),
             T("(losing)", 13, INDUSTRY),
         ).arrange(RIGHT, buff=0.07)
         lose_x.move_to([0, -lose_bg.height/2 + 0.22, 0])
@@ -2717,10 +2717,7 @@ class P4_PostTraining(VoiceoverScene):
                       buff=0.08, color=INDUSTRY, stroke_width=2.0,
                       max_tip_length_to_length_ratio=0.15)
 
-        prob_t = MathTex(
-            r"P(y_w \mid x)\,\uparrow \quad\quad P(y_l \mid x)\,\downarrow",
-            font_size=28, color=WHITE,
-        )
+        prob_t = T("P(y_w | x)  UP     P(y_l | x)  DOWN", 22, WHITE)
         prob_t.move_to(DOWN * 2.42)
 
         with self.voiceover(
@@ -2758,13 +2755,12 @@ class P4_PostTraining(VoiceoverScene):
         dpo_src   = T("Rafailov et al., NeurIPS 2023  ·  Stanford", 14, NEUTRAL)
         dpo_src.next_to(dpo_title, DOWN, buff=0.32)
 
-        formula_rows = MathTex(
-            r"\mathcal{L}_{\text{DPO}} = -\mathbb{E}\!\left[\log\sigma\!\left(",
-            r"\beta\log\frac{\pi_\theta(y_w\!\mid\! x)}{\pi_{\text{ref}}(y_w\!\mid\! x)}",
-            r"-\,\beta\log\frac{\pi_\theta(y_l\!\mid\! x)}{\pi_{\text{ref}}(y_l\!\mid\! x)}",
-            r"\right)\right]",
-            font_size=28,
-        )
+        formula_rows = VGroup(
+            T("L_DPO = -E [ log sigmoid(", 18, WHITE),
+            T("beta log policy(y_w | x) / reference(y_w | x)", 16, SUCCESS),
+            T("- beta log policy(y_l | x) / reference(y_l | x)", 16, INDUSTRY),
+            T(") ]", 18, WHITE),
+        ).arrange(DOWN, buff=0.08)
         formula_rows[1].set_color(SUCCESS)
         formula_rows[2].set_color(INDUSTRY)
         formula_rows.next_to(dpo_src, DOWN, buff=0.38)
@@ -2776,11 +2772,11 @@ class P4_PostTraining(VoiceoverScene):
 
         legend_items = VGroup(
             VGroup(
-                MathTex(r"\pi_\theta", font_size=22, color=SUCCESS),
+                T("policy", 17, SUCCESS),
                 T(" = policy (mô hình đang học)", 13, WHITE),
             ).arrange(RIGHT, buff=0.10),
             VGroup(
-                MathTex(r"\pi_{\text{ref}}", font_size=22, color=INDUSTRY),
+                T("reference", 17, INDUSTRY),
                 T(" = reference model (cố định — tốn bộ nhớ!)", 13, WHITE),
             ).arrange(RIGHT, buff=0.10),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)

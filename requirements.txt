@@ -1,0 +1,5 @@
+manim==0.20.1
+edge-tts
+numpy
+pyglet
+av
