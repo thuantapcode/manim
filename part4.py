@@ -289,7 +289,7 @@ class P4_DataCuration(VoiceoverScene):
                 Create(cross)
             )
 
-            self.wait(max(0, tr.duration - 2.8))
+            self.wait(max(0, tr.duration - 4))
 
         with self.voiceover(
                 text=(
@@ -1122,7 +1122,7 @@ class P4_CuratingProject(VoiceoverScene):
             self.play(FadeIn(struct_bg), Write(struct_head), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(row, shift=RIGHT * 0.1) for row in items_group], lag_ratio=0.22),
                       run_time=0.8)
-            self.wait(0.2)
+            self.wait(2)
             self.play(GrowFromCenter(vs_t), run_time=0.3)
             self.play(FadeIn(cc_bg), Write(cc_head), run_time=0.5)
             self.play(LaggedStart(*[GrowFromCenter(d) for d in chaos_dots], lag_ratio=0.06), run_time=0.95)
@@ -1239,14 +1239,13 @@ class P4_WebOrganizer(VoiceoverScene):
             run_time=1.5
         )
 
-        desc = T("Mỗi trang web được gán đồng thời một chủ đề và một định dạng", 16, WHITE)
+        desc = T("Mỗi trang web được gán đồng thời một chủ đề và định dạng", 16, WHITE)
         desc.next_to(VGroup(topic_panel, format_panel), DOWN, buff=0.5)
 
         with self.voiceover(
                 text="Mỗi trang web giờ đây không còn là một phần tử vô danh, mà được gắn đồng thời vào một chủ đề và định dạng cụ thể."
         ) as tr:
             self.play(FadeIn(desc))
-            self.wait(max(0, tr.duration - 1.5))
 
         self.play(FadeOut(VGroup(topic_panel, format_panel, topic_title, format_title, grid_topic, grid_format, desc)))
 
@@ -2965,10 +2964,10 @@ class P4_PostTraining(VoiceoverScene):
         open_title.next_to(header, DOWN, buff=0.45)
 
         questions_open = VGroup(
-            T("① SimPO trên Llama 3 vs Gemma 2: tại sao forgetting khác nhau?", 15, WHITE),
-            T("② RL reasoning: tại sao Qwen 2.5 base, không phải Llama 3?", 15, WHITE),
-            T("③ Thế giới thiếu controlled studies: base × data × algorithm", 15, HIGHLIGHT),
-            T("④ Cần hiểu hộp đen trước khi mơ về mở rộng quy mô!", 15, INDUSTRY),
+            T("① SimPO trên Llama 3 vs Gemma 2: tại sao forgetting khác nhau?", 20, WHITE),
+            T("② RL reasoning: tại sao Qwen 2.5 base, không phải Llama 3?", 20, WHITE),
+            T("③ Thế giới thiếu controlled studies: base × data × algorithm", 20, HIGHLIGHT),
+            T("④ Cần hiểu hộp đen trước khi mơ về mở rộng quy mô!", 20, INDUSTRY),
         ).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
         questions_open.move_to(DOWN * 0.85)
 

@@ -190,7 +190,7 @@ class P5_RLReasoning(VoiceoverScene):
             """
             Ý tưởng của học tăng cường cho suy luận khá trực quan.
 
-            Đầu tiên, hệ thống được giao một bài toán hình thức,
+            Đầu tiên, hệ thống được giao một bài toán hình thức
             chẳng hạn như một định lý toán học cần chứng minh.
             """
         ):
@@ -201,7 +201,7 @@ class P5_RLReasoning(VoiceoverScene):
 
         with self.voiceover(
             """
-            Bài toán này được đưa vào mô hình ngôn ngữ,
+            Bài toán này được đưa vào mô hình ngôn ngữ
             đóng vai trò policy.
 
             Nhiệm vụ của policy là đề xuất những hướng giải quyết
@@ -216,7 +216,7 @@ class P5_RLReasoning(VoiceoverScene):
 
         with self.voiceover(
             """
-            Thay vì chỉ tạo ra một đáp án cuối cùng,
+            Thay vì chỉ tạo ra một đáp án cuối cùng
             mô hình còn sinh ra toàn bộ quá trình suy nghĩ
             từng bước một.
             """
@@ -277,11 +277,11 @@ class P5_RLReasoning(VoiceoverScene):
 
         with self.voiceover(
             """
-            Nếu Lean xác nhận lời giải là chính xác,
+            Nếu Lean xác nhận lời giải là chính xác
             mô hình nhận được phần thưởng cao.
 
             Ngược lại,
-            nếu chứng minh thất bại,
+            nếu chứng minh thất bại
             phần thưởng sẽ thấp hoặc bằng không.
             """
         ):
@@ -319,7 +319,7 @@ class P5_RLReasoning(VoiceoverScene):
             Tín hiệu phần thưởng này được đưa ngược trở lại policy.
 
             Qua hàng triệu vòng lặp như vậy,
-            mô hình dần học được những kiểu suy luận hiệu quả hơn,
+            mô hình dần học được những kiểu suy luận hiệu quả hơn
             và loại bỏ các hướng suy nghĩ sai.
             """
         ):
@@ -521,9 +521,9 @@ class P5_RLReasoning(VoiceoverScene):
             Nếu nhìn lại toàn bộ hành trình Princeton NLP,
             chúng ta sẽ thấy rất nhiều dự án khác nhau.
 
-            Sheared LLaMA.
-            ProLong.
-            SimPO.
+            Sheared LLaMA
+            ProLong
+            SimPO
             Và cả Goedel Prover.
             """
         ):
@@ -575,7 +575,7 @@ class P5_RLReasoning(VoiceoverScene):
             tạo ra các kết quả đạt chuẩn trạng thái công nghệ tiên tiến nhất.
 
             Một minh chứng rằng:
-            đổi mới thực sự không chỉ đến từ quy mô,
+            đổi mới thực sự không chỉ đến từ quy mô
             mà còn đến từ ý tưởng đúng đắn.
             """
         ):
@@ -612,27 +612,27 @@ class P5_Summary(VoiceoverScene):
         hdr = T("VAI TRÒ CỦA HỌC THUẬT", 26, ACADEMIA, weight=BOLD).shift(UP * 2.7)
 
         # Left column — what academia doesn't have
-        lft_title = T("Không có:", 17, INDUSTRY, weight=BOLD).shift(LEFT * 3.5 + UP * 1.6)
+        lft_title = T("Không có:", 24, INDUSTRY, weight=BOLD).shift(LEFT * 3.5 + UP * 1.6)
         lft_items = VGroup(
-            T("✗  Siêu mô hình thương mại", 16, INDUSTRY),
-            T("✗  Hàng nghìn GPU",           16, INDUSTRY),
-            T("✗  Hàng tỉ USD ngân sách",    16, INDUSTRY),
+            T("✗  Siêu mô hình thương mại", 20, INDUSTRY),
+            T("✗  Hàng nghìn GPU",           20, INDUSTRY),
+            T("✗  Hàng tỉ USD ngân sách",    20, INDUSTRY),
         ).arrange(DOWN, buff=0.25, aligned_edge=LEFT).shift(LEFT * 3.5 + UP * 0.5)
 
         divider = Line(UP * 2.0, DOWN * 2.0, color=NEUTRAL, stroke_width=1.8)
 
         # Right column — what academia contributes
-        rgt_title = T("Đóng góp:", 17, SUCCESS, weight=BOLD).shift(RIGHT * 3.2 + UP * 1.6)
+        rgt_title = T("Đóng góp:", 24, SUCCESS, weight=BOLD).shift(RIGHT * 3.2 + UP * 1.6)
         rgt_items = VGroup(
-            T("✓  Tri thức nền tảng quý giá", 16, SUCCESS),
-            T("✓  Thực nghiệm có kiểm soát",  16, SUCCESS),
-            T("✓  Bài báo khoa học chất lượng", 16, SUCCESS),
+            T("✓  Tri thức nền tảng quý giá", 20, SUCCESS),
+            T("✓  Thực nghiệm có kiểm soát",  20, SUCCESS),
+            T("✓  Bài báo khoa học chất lượng", 20, SUCCESS),
         ).arrange(DOWN, buff=0.25, aligned_edge=LEFT).shift(RIGHT * 3.0 + UP * 0.5)
 
         sub_note = T(
             "Đóng góp tri thức nền tảng quý giá cho nhân loại",
-            15, NEUTRAL
-        ).shift(DOWN * 2.2)
+            20, NEUTRAL
+        ).shift(DOWN * 2.8)
 
         with self.voiceover(
             "Giới học thuật có thể không sở hữu những siêu mô hình thương mại, nhưng "
