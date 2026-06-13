@@ -1,6 +1,40 @@
+# Python caches and environments
 __pycache__/
 *.py[cod]
+*.pyd
 .venv/
+venv/
+env/
 .codex_*/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Manim renders, partial files, generated voiceovers and TeX cache
 media/
+videos/
+partial_movie_files/
+Tex/
+*.aux
+*.dvi
 *.log
+*.out
+*.synctex.gz
+
+# Local-only large reference files
+slide.pdf
+speech_audio.mp3
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.old
+*~
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
