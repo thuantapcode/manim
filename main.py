@@ -1,15 +1,41 @@
 """
-main.py — Manim animation: "Training LLMs in Academia: Challenge or Calling?"
-Target duration: ~7 minutes
-Run all 3 scenes as separate videos: python main.py
-Or render one scene: manim -pql main.py <SceneName>
+Main entry point for the complete Part 1-5 video.
+
+Run: python main.py
 """
 
-from manim import *
-import numpy as np
 import os
 import subprocess
 import sys
+from pathlib import Path
+
+
+PROJECT_DIR = Path(__file__).resolve().parent
+WORKSPACE_DIR = PROJECT_DIR.parent
+PYTHON_312 = Path(
+    r"C:\Users\LENOVO\.cache\codex-runtimes\codex-primary-runtime"
+    r"\dependencies\python\python.exe"
+)
+
+# A plain `python main.py` may use the system Python 3.14. Relaunch with the
+# project's compatible Python 3.12 before importing binary Manim dependencies.
+if __name__ == "__main__" and sys.version_info[:2] != (3, 12):
+    if not PYTHON_312.exists():
+        raise RuntimeError(
+            "Python 3.12 is required. Expected runtime: "
+            f"{PYTHON_312}"
+        )
+    raise SystemExit(subprocess.call([str(PYTHON_312), str(__file__)]))
+
+for dependency_dir in (
+    WORKSPACE_DIR / ".codex_manim312_render",
+    WORKSPACE_DIR / ".codex_edge_tts",
+):
+    if dependency_dir.exists():
+        sys.path.insert(0, str(dependency_dir))
+
+from manim import *
+import numpy as np
 
 # Part 4 and Part 5 live beside this file in the GitHub project folder.
 PARTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1391,11 +1417,15 @@ class FullVideo(FullVideoBase):
 
 
 if __name__ == "__main__":
-    quality = os.environ.get("MANIM_QUALITY", "-ql")
+    quality = os.environ.get("MANIM_QUALITY", "-qh")
 
     print(f"Exporting FullVideo with quality {quality}...")
+    env = os.environ.copy()
+    env.pop("EDGE_TTS_OFFLINE_FALLBACK", None)
     subprocess.run(
         [sys.executable, "-m", "manim", quality, __file__, "FullVideo"],
         check=True,
+        cwd=PROJECT_DIR,
+        env=env,
     )
 

@@ -22,16 +22,19 @@ Parts 4-5 use Edge TTS and require an Internet connection on the first render.
 
 ## Render
 
-Quick preview:
+Render the complete Part 1-5 Full HD video:
 
 ```powershell
 python main.py
 ```
 
-Full HD 1080p:
+`main.py` automatically selects the project's compatible Python 3.12 runtime,
+loads Manim and Edge TTS, and renders at 1080p60.
+
+To override quality when needed:
 
 ```powershell
-$env:MANIM_QUALITY="-qh"
+$env:MANIM_QUALITY="-ql"
 python main.py
 ```
 
