@@ -66,13 +66,15 @@ TRACKS = [
 def decode_audio(path: Path) -> np.ndarray:
     container = av.open(str(path))
     stream = next(s for s in container.streams if s.type == "audio")
-    resampler = av.AudioResampler(format="s16", layout="stereo", rate=SAMPLE_RATE)
+    # Planar stereo keeps left/right as two explicit rows. Using packed s16
+    # and reshaping it would split the interleaved samples incorrectly.
+    resampler = av.AudioResampler(format="s16p", layout="stereo", rate=SAMPLE_RATE)
     chunks = []
     for frame in container.decode(stream):
         for converted in resampler.resample(frame):
-            chunks.append(converted.to_ndarray().reshape(CHANNELS, -1).T)
+            chunks.append(converted.to_ndarray().T)
     for converted in resampler.resample(None):
-        chunks.append(converted.to_ndarray().reshape(CHANNELS, -1).T)
+        chunks.append(converted.to_ndarray().T)
     return np.concatenate(chunks).astype(np.int32)
 
 
@@ -121,7 +123,10 @@ def replace_audio() -> None:
     output.close()
     source.close()
     audio.close()
-    VIDEO.replace(VIDEO.with_name("FullVideo_silent_backup.mp4"))
+    backup = VIDEO.with_name("FullVideo_before_audio_repair.mp4")
+    if backup.exists():
+        backup.unlink()
+    VIDEO.replace(backup)
     OUTPUT.replace(VIDEO)
 
 
